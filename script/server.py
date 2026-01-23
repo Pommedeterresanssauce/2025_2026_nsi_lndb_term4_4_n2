@@ -18,11 +18,12 @@ except socket.error as  e:
 s.listen(4)
 print ("waiting for a connection, server started")
 
-def threaded_connection(conn) :
+def threaded_client(conn) :
+    conn.send(str.encode("Connected"))
     reply = ""
     while True :
         try :
-            data = conn.rcv(2048)
+            data = conn.recv(2048)
             reply = data.decode("uth-8")
             if not data :
                 
@@ -34,9 +35,12 @@ def threaded_connection(conn) :
             conn.sendall(str.encode(reply))
         except :
             break
-                
+        
+    print ("Lost connection")
+    conn.close()
+    
 while True :
     conn, addr = s.accept()
-    pritn("Connected to :", addr)
+    print("Connected to :", addr)
     
     start_new_thread (threaded_client, (conn,))
